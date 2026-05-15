@@ -1,25 +1,25 @@
 <?php
 session_start();
 require_once '../includes/db.php';
-
+    
 if(!isset($_SESSION['user_id']) || $_SESSION['role'] != 'admin') {
     header("Location: ../login.php");
     exit();
 }
-
+    
 // Handle delete
 if(isset($_GET['delete'])) {
     $id = $_GET['delete'];
-
+    
     $scholar = $pdo->prepare("SELECT email FROM scholars WHERE scholar_id = ?");
     $scholar->execute([$id]);
     $sch = $scholar->fetch();
-
+    
     if($sch) {
         $student = $pdo->prepare("SELECT student_id FROM students WHERE email = ?");
         $student->execute([$sch['email']]);
         $std = $student->fetch();
-
+    
         if($std) {
             $pdo->prepare("
                 DELETE FROM documents WHERE application_id IN (
@@ -30,26 +30,26 @@ if(isset($_GET['delete'])) {
             $pdo->prepare("DELETE FROM applications WHERE scholar_id = ?")->execute([$std['student_id']]);
         }
     }
-
+    
     $pdo->prepare("DELETE FROM scholars WHERE scholar_id = ?")->execute([$id]);
     header("Location: scholars.php?success=deleted");
     exit();
 }
-
+    
 // Handle archive
 if(isset($_GET['archive'])) {
     $id     = $_GET['archive'];
     $reason = $_GET['reason'] ?? 'No reason provided';
-
+    
     $scholar = $pdo->prepare("SELECT email FROM scholars WHERE scholar_id = ?");
     $scholar->execute([$id]);
     $sch = $scholar->fetch();
-
+    
     if($sch) {
         $student = $pdo->prepare("SELECT student_id FROM students WHERE email = ?");
         $student->execute([$sch['email']]);
         $std = $student->fetch();
-
+    
         if($std) {
             $pdo->prepare("
                 DELETE FROM documents WHERE application_id IN (
@@ -60,12 +60,12 @@ if(isset($_GET['archive'])) {
             $pdo->prepare("DELETE FROM applications WHERE scholar_id = ?")->execute([$std['student_id']]);
         }
     }
-
+    
     $pdo->prepare("UPDATE scholars SET is_archived=1, archived_at=NOW(), archive_reason=? WHERE scholar_id=?")->execute([$reason, $id]);
     header("Location: scholars.php?success=archived");
     exit();
 }
-
+    
 // Get active scholars — sorted by barangay order then last name A-Z
 $search = $_GET['search'] ?? '';
 if($search) {
@@ -96,7 +96,7 @@ if($search) {
             ), last_name ASC, first_name ASC");
 }
 $scholars = $stmt->fetchAll();
-
+    
 // Count archived
 $archived_count = $pdo->query("SELECT COUNT(*) FROM scholars WHERE is_archived=1")->fetchColumn();
 ?>
@@ -110,73 +110,63 @@ $archived_count = $pdo->query("SELECT COUNT(*) FROM scholars WHERE is_archived=1
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; }
-        .sidebar {
-            width: 240px; min-height: 100vh; background: #1A3A6B;
-            position: fixed; top: 0; left: 0; padding-top: 20px; z-index: 100;
-        }
-        .sidebar-brand {
-            color: white; font-size: 15px; font-weight: 600;
-            padding: 0 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 10px;
-        }
-        .sidebar-brand small { display: block; font-size: 11px; opacity: 0.7; font-weight: 400; }
-        .nav-link {
-            color: rgba(255,255,255,0.75); padding: 10px 20px; font-size: 14px;
-            display: flex; align-items: center; gap: 10px;
-        }
-        .nav-link:hover, .nav-link.active {
-            color: white; background: rgba(255,255,255,0.1); border-left: 3px solid #fff;
-        }
-        .main-content { margin-left: 240px; padding: 24px; }
-        .topbar {
-            background: white; border-radius: 12px; padding: 14px 20px;
-            margin-bottom: 24px; display: flex; justify-content: space-between;
-            align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        .card { border: none; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        @media (max-width: 768px) {
-        .sidebar { display: none; }
-        .main-content { margin-left: 0 !important; padding: 16px !important; }
-        .topbar { flex-direction: column; align-items: flex-start; gap: 8px; }
-        .stat-card { margin-bottom: 8px; }
-        .filter-btn { font-size: 11px; padding: 4px 8px; }
-        .modal-dialog { margin: 8px; }
-        .table-responsive { font-size: 13px; }
-        .main-content { max-width: 100% !important; }
-        }
-        @media (max-width: 768px) {
-        .sidebar { 
-        transform: translateX(-240px);
-        transition: transform 0.3s ease;
-        z-index: 1050;
-        }
-        .sidebar.open { 
-        transform: translateX(0); 
-        }
-        .main-content { 
-        margin-left: 0 !important; 
-        padding: 70px 12px 16px !important; 
-        }
-        .mobile-topbar {
-        display: flex !important;
-        }
-        .sidebar-overlay {
-        display: none;
-        position: fixed;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(0,0,0,0.5);
-        z-index: 1040;
-        }
-        .sidebar-overlay.show { display: block; }
-        }
-        @media (min-width: 769px) {
-        .mobile-topbar { display: none !important; }
-        .sidebar { transform: translateX(0) !important; }
-        }
+    .sidebar {
+    width: 240px; min-height: 100vh; background: #1A3A6B;
+    position: fixed; top: 0; left: 0; padding-top: 20px;
+    z-index: 1050; transition: transform 0.3s ease;
+    }
+    .sidebar-brand {
+    color: white; font-size: 15px; font-weight: 600;
+    padding: 0 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 10px;
+    }
+    .sidebar-brand small { display: block; font-size: 11px; opacity: 0.7; font-weight: 400; }
+    .nav-link {
+    color: rgba(255,255,255,0.75); padding: 10px 20px; font-size: 14px;
+    display: flex; align-items: center; gap: 10px;
+    }
+    .nav-link:hover, .nav-link.active {
+    color: white; background: rgba(255,255,255,0.1); border-left: 3px solid #fff;
+    }
+    .main-content { margin-left: 240px; padding: 24px; }
+    .topbar {
+    background: white; border-radius: 12px; padding: 14px 20px;
+    margin-bottom: 24px; display: flex; justify-content: space-between;
+    align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .card { border: none; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .mobile-topbar { display: none; }
+    .sidebar-overlay {
+    display: none; position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5); z-index: 1040;
+    }
+    .sidebar-overlay.show { display: block; }
+    @media (max-width: 768px) {
+    .sidebar { transform: translateX(-240px); }
+    .sidebar.open { transform: translateX(0); }
+    .main-content { margin-left: 0 !important; padding: 70px 12px 16px !important; }
+    .mobile-topbar {
+        display: flex; position: fixed; top: 0; left: 0; right: 0;
+        height: 56px; background: #1A3A6B; z-index: 1030;
+        align-items: center; padding: 0 16px;
+        justify-content: space-between;
+    }
+    .topbar { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .stat-card { margin-bottom: 8px; }
+    .filter-btn { font-size: 11px; padding: 4px 8px; }
+    .modal-dialog { margin: 8px; }
+    .table-responsive { font-size: 13px; }
+    }
+    @media (min-width: 769px) {
+    .mobile-topbar { display: none !important; }
+    .sidebar { transform: translateX(0) !important; }
+    }
     </style>
 </head>
 <body>
-    <!-- Mobile Top Bar -->
-<div class="mobile-topbar" style="display:none; position:fixed; top:0; left:0; right:0; height:56px; background:#1A3A6B; z-index:1030; align-items:center; padding:0 16px; justify-content:space-between;">
+    
+<!-- Mobile Top Bar -->
+<div class="mobile-topbar">
     <span style="color:white; font-size:15px; font-weight:600;">
         <i class="bi bi-mortarboard-fill me-2"></i>Cainta Scholarship
     </span>
@@ -184,9 +174,11 @@ $archived_count = $pdo->query("SELECT COUNT(*) FROM scholars WHERE is_archived=1
         <i class="bi bi-list" id="nav-icon"></i>
     </button>
 </div>
+    
 <!-- Sidebar Overlay -->
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleNav()"></div>
-
+    
+<!-- Sidebar -->
 <div class="sidebar" id="sidebar">
     <div class="sidebar-brand">
         <i class="bi bi-mortarboard-fill me-2"></i>Cainta Scholarship
@@ -203,7 +195,7 @@ $archived_count = $pdo->query("SELECT COUNT(*) FROM scholars WHERE is_archived=1
         <a href="../logout.php" class="nav-link"><i class="bi bi-box-arrow-left"></i> Logout</a>
     </nav>
 </div>
-
+    
 <div class="main-content">
     <div class="topbar">
         <div>
@@ -222,12 +214,12 @@ $archived_count = $pdo->query("SELECT COUNT(*) FROM scholars WHERE is_archived=1
             </a>
         </div>
     </div>
-
+    
     <?php if(isset($_GET['success'])): ?>
     <div class="alert alert-success alert-dismissible fade show">
         <i class="bi bi-check-circle me-1"></i>
         <?php
-        if($_GET['success'] == 'added')    echo 'Scholar added successfully!';
+        if($_GET['success'] == 'added')        echo 'Scholar added successfully!';
         elseif($_GET['success'] == 'updated')  echo 'Scholar updated successfully!';
         elseif($_GET['success'] == 'deleted')  echo 'Scholar deleted successfully!';
         elseif($_GET['success'] == 'archived') echo 'Scholar archived successfully!';
@@ -236,7 +228,7 @@ $archived_count = $pdo->query("SELECT COUNT(*) FROM scholars WHERE is_archived=1
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
     <?php endif; ?>
-
+    
     <div class="card">
         <div class="card-body">
             <form method="GET" class="mb-3">
@@ -252,7 +244,7 @@ $archived_count = $pdo->query("SELECT COUNT(*) FROM scholars WHERE is_archived=1
                     <?php endif; ?>
                 </div>
             </form>
-
+    
             <div class="table-responsive">
                 <table class="table table-hover align-middle">
                     <thead class="table-light">
@@ -319,7 +311,7 @@ $archived_count = $pdo->query("SELECT COUNT(*) FROM scholars WHERE is_archived=1
         </div>
     </div>
 </div>
-
+    
 <!-- Archive Modal -->
 <div class="modal fade" id="archiveModal" tabindex="-1">
     <div class="modal-dialog">
@@ -357,12 +349,12 @@ $archived_count = $pdo->query("SELECT COUNT(*) FROM scholars WHERE is_archived=1
         </div>
     </div>
 </div>
-
+    
 <?php include '../chatbot_widget.php'; ?>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 let archiveId = null;
-
+    
 function archiveScholar(id, name) {
     archiveId = id;
     document.getElementById('archive-name').textContent = name;
@@ -370,12 +362,12 @@ function archiveScholar(id, name) {
     document.getElementById('archive-reason-other').style.display = 'none';
     new bootstrap.Modal(document.getElementById('archiveModal')).show();
 }
-
+    
 function handleReasonSelect(sel) {
     const other = document.getElementById('archive-reason-other');
     other.style.display = sel.value === 'Other' ? 'block' : 'none';
 }
-
+    
 function confirmArchive() {
     const select = document.getElementById('archive-reason-select');
     const other  = document.getElementById('archive-reason-other');
@@ -384,17 +376,23 @@ function confirmArchive() {
     window.location.href = 'scholars.php?archive=' + archiveId + '&reason=' + encodeURIComponent(reason);
 }
 </script>
-
+    
 <script>
 function toggleNav() {
-    const sidebar = document.getElementById('sidebar') || document.querySelector('.sidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    const icon = document.getElementById('nav-icon');
-    sidebar.classList.toggle('open');
-    overlay.classList.toggle('show');
-    icon.className = sidebar.classList.contains('open') ? 'bi bi-x' : 'bi bi-list';
+    var sidebar = document.getElementById('sidebar');
+    var overlay = document.getElementById('sidebarOverlay');
+    var icon = document.getElementById('nav-icon');
+    if(sidebar.classList.contains('open')) {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('show');
+        icon.className = 'bi bi-list';
+    } else {
+        sidebar.classList.add('open');
+        overlay.classList.add('show');
+        icon.className = 'bi bi-x';
+    }
 }
 </script>
-
+    
 </body>
 </html>

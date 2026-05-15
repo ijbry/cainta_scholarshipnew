@@ -32,7 +32,8 @@ $recent_apps = $pdo->query("
         body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; }
         .sidebar {
             width: 240px; min-height: 100vh; background: #1A3A6B;
-            position: fixed; top: 0; left: 0; padding-top: 20px; z-index: 100;
+            position: fixed; top: 0; left: 0; padding-top: 20px;
+            z-index: 1050; transition: transform 0.3s ease;
         }
         .sidebar-brand {
             color: white; font-size: 15px; font-weight: 600;
@@ -64,50 +65,39 @@ $recent_apps = $pdo->query("
         .badge-rejected { background: #f8d7da; color: #842029; }
         .badge-for_review { background: #cfe2ff; color: #084298; }
         .badge-incomplete { background: #f8d7da; color: #842029; }
-        @media (max-width: 768px) {
-        .sidebar { display: none; }
-        .main-content { margin-left: 0 !important; padding: 16px !important; }
-        .topbar { flex-direction: column; align-items: flex-start; gap: 8px; }
-        .stat-card { margin-bottom: 8px; }
-        .filter-btn { font-size: 11px; padding: 4px 8px; }
-        .modal-dialog { margin: 8px; }
-        .table-responsive { font-size: 13px; }
-        .main-content { max-width: 100% !important; }
-        }
-        @media (max-width: 768px) {
-        .sidebar { 
-        transform: translateX(-240px);
-        transition: transform 0.3s ease;
-        z-index: 1050;
-        }
-        .sidebar.open { 
-        transform: translateX(0); 
-        }
-        .main-content { 
-        margin-left: 0 !important; 
-        padding: 70px 12px 16px !important; 
-        }
-        .mobile-topbar {
-        display: flex !important;
-        }
+        .mobile-topbar { display: none; }
         .sidebar-overlay {
-        display: none;
-        position: fixed;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(0,0,0,0.5);
-        z-index: 1040;
+            display: none; position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5); z-index: 1040;
         }
         .sidebar-overlay.show { display: block; }
+
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-240px); }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0 !important; padding: 70px 12px 16px !important; }
+            .mobile-topbar {
+                display: flex; position: fixed; top: 0; left: 0; right: 0;
+                height: 56px; background: #1A3A6B; z-index: 1030;
+                align-items: center; padding: 0 16px;
+                justify-content: space-between;
+            }
+            .topbar { flex-direction: column; align-items: flex-start; gap: 8px; }
+            .stat-card { margin-bottom: 8px; }
+            .modal-dialog { margin: 8px; }
+            .table-responsive { font-size: 13px; }
         }
         @media (min-width: 769px) {
-        .mobile-topbar { display: none !important; }
-        .sidebar { transform: translateX(0) !important; }
+            .mobile-topbar { display: none !important; }
+            .sidebar { transform: translateX(0) !important; }
         }
     </style>
 </head>
 <body>
-    <!-- Mobile Top Bar -->
-<div class="mobile-topbar" style="display:none; position:fixed; top:0; left:0; right:0; height:56px; background:#1A3A6B; z-index:1030; align-items:center; padding:0 16px; justify-content:space-between;">
+
+<!-- Mobile Top Bar -->
+<div class="mobile-topbar">
     <span style="color:white; font-size:15px; font-weight:600;">
         <i class="bi bi-mortarboard-fill me-2"></i>Cainta Scholarship
     </span>
@@ -115,6 +105,7 @@ $recent_apps = $pdo->query("
         <i class="bi bi-list" id="nav-icon"></i>
     </button>
 </div>
+
 <!-- Sidebar Overlay -->
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleNav()"></div>
 
@@ -127,6 +118,7 @@ $recent_apps = $pdo->query("
     <nav>
         <a href="dashboard.php" class="nav-link active"><i class="bi bi-speedometer2"></i> Dashboard</a>
         <a href="scholars.php" class="nav-link"><i class="bi bi-people"></i> Scholars</a>
+        <a href="students.php" class="nav-link"><i class="bi bi-person-lines-fill"></i> Students</a>
         <a href="applications.php" class="nav-link"><i class="bi bi-file-earmark-text"></i> Applications</a>
         <a href="disbursements.php" class="nav-link"><i class="bi bi-cash-stack"></i> Disbursements</a>
         <a href="reports.php" class="nav-link"><i class="bi bi-bar-chart"></i> Reports</a>
@@ -205,20 +197,24 @@ $recent_apps = $pdo->query("
         </div>
     </div>
 </div>
-<a href="students.php" class="nav-link"><i class="bi bi-person-lines-fill"></i> Students</a>
-<?php include '../chatbot_widget.php'; ?>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
+<?php include '../chatbot_widget.php'; ?>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 function toggleNav() {
-    const sidebar = document.getElementById('sidebar') || document.querySelector('.sidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    const icon = document.getElementById('nav-icon');
-    sidebar.classList.toggle('open');
-    overlay.classList.toggle('show');
-    icon.className = sidebar.classList.contains('open') ? 'bi bi-x' : 'bi bi-list';
+    var sidebar = document.getElementById('sidebar');
+    var overlay = document.getElementById('sidebarOverlay');
+    var icon = document.getElementById('nav-icon');
+    if(sidebar.classList.contains('open')) {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('show');
+        icon.className = 'bi bi-list';
+    } else {
+        sidebar.classList.add('open');
+        overlay.classList.add('show');
+        icon.className = 'bi bi-x';
+    }
 }
-</script>
-
+    </script>
 </body>
 </html>

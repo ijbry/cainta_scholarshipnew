@@ -28,6 +28,7 @@ $total = array_sum(array_column(array_filter($disbursements, fn($d) => $d['statu
         .topnav {
             background: #1A3A6B; padding: 12px 24px;
             display: flex; justify-content: space-between; align-items: center;
+            position: relative;
         }
         .topnav-brand { color: white; font-size: 16px; font-weight: 600; text-decoration: none; }
         .topnav-links a { color: rgba(255,255,255,0.8); text-decoration: none; font-size: 14px; margin-left: 20px; }
@@ -39,15 +40,44 @@ $total = array_sum(array_column(array_filter($disbursements, fn($d) => $d['statu
             background: linear-gradient(135deg, #1A3A6B, #2E75B6);
             color: white; border-radius: 12px; padding: 24px; margin-bottom: 24px;
         }
+
+        /* Mobile nav */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 22px;
+            cursor: pointer;
+        }
+        .mobile-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #1A3A6B;
+            z-index: 999;
+            padding: 8px 0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .mobile-dropdown.show { display: block; }
+        .mobile-dropdown a {
+            display: block;
+            padding: 12px 24px;
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            font-size: 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .mobile-dropdown a:hover { background: rgba(255,255,255,0.1); color: white; }
+        .mobile-dropdown a.active { color: white; font-weight: 600; }
+
         @media (max-width: 768px) {
-        .sidebar { display: none; }
-        .main-content { margin-left: 0 !important; padding: 16px !important; }
-        .topbar { flex-direction: column; align-items: flex-start; gap: 8px; }
-        .stat-card { margin-bottom: 8px; }
-        .filter-btn { font-size: 11px; padding: 4px 8px; }
-        .modal-dialog { margin: 8px; }
-        .table-responsive { font-size: 13px; }
-        .main-content { max-width: 100% !important; }
+            .topnav-links { display: none !important; }
+            .mobile-menu-btn { display: block; }
+            .main-content { margin-left: 0 !important; padding: 16px !important; max-width: 100% !important; }
+            .table-responsive { font-size: 13px; }
         }
     </style>
 </head>
@@ -62,6 +92,18 @@ $total = array_sum(array_column(array_filter($disbursements, fn($d) => $d['statu
         <a href="status.php">Status</a>
         <a href="disbursements.php" class="active">Disbursements</a>
         <a href="../student_logout.php">Logout</a>
+    </div>
+    <!-- Mobile hamburger -->
+    <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+        <i class="bi bi-list" id="mobile-nav-icon"></i>
+    </button>
+    <!-- Mobile dropdown -->
+    <div class="mobile-dropdown" id="mobileDropdown">
+        <a href="dashboard.php"><i class="bi bi-house me-2"></i>Home</a>
+        <a href="application.php"><i class="bi bi-file-earmark me-2"></i>My Application</a>
+        <a href="status.php"><i class="bi bi-clock me-2"></i>Status</a>
+        <a href="disbursements.php" class="active"><i class="bi bi-cash me-2"></i>Disbursements</a>
+        <a href="../student_logout.php" style="color:#ff8080;"><i class="bi bi-box-arrow-left me-2"></i>Logout</a>
     </div>
 </div>
 
@@ -129,5 +171,27 @@ $total = array_sum(array_column(array_filter($disbursements, fn($d) => $d['statu
 
 <?php include '../chatbot_widget.php'; ?>
 
+<script>
+function toggleMobileMenu() {
+    var dropdown = document.getElementById('mobileDropdown');
+    var icon = document.getElementById('mobile-nav-icon');
+    if (dropdown.classList.contains('show')) {
+        dropdown.classList.remove('show');
+        icon.className = 'bi bi-list';
+    } else {
+        dropdown.classList.add('show');
+        icon.className = 'bi bi-x';
+    }
+}
+document.addEventListener('click', function(e) {
+    var dropdown = document.getElementById('mobileDropdown');
+    var btn = document.querySelector('.mobile-menu-btn');
+    if (dropdown && btn && !dropdown.contains(e.target) && !btn.contains(e.target)) {
+        dropdown.classList.remove('show');
+        var icon = document.getElementById('mobile-nav-icon');
+        if(icon) icon.className = 'bi bi-list';
+    }
+});
+</script>
 </body>
 </html>

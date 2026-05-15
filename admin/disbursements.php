@@ -1,15 +1,15 @@
 <?php
 session_start();
 require_once '../includes/db.php';
-
+    
 // Allow both admin and cashier
 if(!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin', 'cashier'])) {
     header("Location: ../login.php");
     exit();
 }
-
+    
 $is_admin = $_SESSION['role'] == 'admin';
-
+    
 // Handle add disbursement (admin only)
 if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_disbursement']) && $is_admin) {
     $scholar_id = $_POST['scholar_id'];
@@ -18,11 +18,10 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_disbursement']) && 
     $amount = $_POST['amount'] === 'custom' ? $_POST['custom_amount'] : $_POST['amount'];
     $stmt = $pdo->prepare("INSERT INTO disbursements (scholar_id, school_year, semester, amount, status, released_by) VALUES (?, ?, ?, ?, 'pending', ?)");
     $stmt->execute([$scholar_id, $school_year, $semester, $amount, $_SESSION['user_id']]);
-    $redirect = $is_admin ? 'disbursements.php' : '../cashier/dashboard.php';
     header("Location: disbursements.php?success=added");
     exit();
 }
-
+    
 // Handle release (both admin and cashier)
 if(isset($_GET['release'])) {
     $id = $_GET['release'];
@@ -32,7 +31,7 @@ if(isset($_GET['release'])) {
     header("Location: " . $redirect);
     exit();
 }
-
+    
 // Get all disbursements
 $disbursements = $pdo->query("
     SELECT d.*, s.first_name, s.last_name, s.barangay,
@@ -42,7 +41,7 @@ $disbursements = $pdo->query("
     LEFT JOIN users u ON d.released_by = u.user_id
     ORDER BY d.created_at DESC
 ")->fetchAll();
-
+    
 // Get approved students for dropdown (admin only)
 $students = [];
 if($is_admin) {
@@ -54,7 +53,7 @@ if($is_admin) {
         ORDER BY s.last_name ASC
     ")->fetchAll();
 }
-
+    
 // Stats
 $total_released = $pdo->query("SELECT SUM(amount) FROM disbursements WHERE status='released'")->fetchColumn();
 $total_pending = $pdo->query("SELECT COUNT(*) FROM disbursements WHERE status='pending'")->fetchColumn();
@@ -70,84 +69,72 @@ $total_scholars_disbursed = $pdo->query("SELECT COUNT(DISTINCT scholar_id) FROM 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; }
-        .sidebar {
-            width: 240px; min-height: 100vh; background: #1A3A6B;
-            position: fixed; top: 0; left: 0; padding-top: 20px; z-index: 100;
-        }
-        .sidebar-brand {
-            color: white; font-size: 15px; font-weight: 600;
-            padding: 0 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 10px;
-        }
-        .sidebar-brand small { display: block; font-size: 11px; opacity: 0.7; font-weight: 400; }
-        .nav-link {
-            color: rgba(255,255,255,0.75); padding: 10px 20px; font-size: 14px;
-            display: flex; align-items: center; gap: 10px;
-        }
-        .nav-link:hover, .nav-link.active {
-            color: white; background: rgba(255,255,255,0.1); border-left: 3px solid #fff;
-        }
-        .main-content { margin-left: 240px; padding: 24px; }
-        .topbar {
-            background: white; border-radius: 12px; padding: 14px 20px;
-            margin-bottom: 24px; display: flex; justify-content: space-between;
-            align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        .stat-card {
-            background: white; border-radius: 12px; padding: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 4px solid;
-        }
-        .card { border: none; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        /* Cashier topbar style */
-        .cashier-topbar {
-            background: #1A3A6B; padding: 12px 24px;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .cashier-topbar-brand { color: white; font-size: 16px; font-weight: 600; }
-        .cashier-topbar-right { color: rgba(255,255,255,0.8); font-size: 13px; }
-        @media (max-width: 768px) {
-        .sidebar { display: none; }
-        .main-content { margin-left: 0 !important; padding: 16px !important; }
-        .topbar { flex-direction: column; align-items: flex-start; gap: 8px; }
-        .stat-card { margin-bottom: 8px; }
-        .filter-btn { font-size: 11px; padding: 4px 8px; }
-        .modal-dialog { margin: 8px; }
-        .table-responsive { font-size: 13px; }
-        .main-content { max-width: 100% !important; }
-        }
-        @media (max-width: 768px) {
-        .sidebar { 
-        transform: translateX(-240px);
-        transition: transform 0.3s ease;
-        z-index: 1050;
-        }
-        .sidebar.open { 
-        transform: translateX(0); 
-        }
-        .main-content { 
-        margin-left: 0 !important; 
-        padding: 70px 12px 16px !important; 
-        }
-        .mobile-topbar {
-        display: flex !important;
-        }
-        .sidebar-overlay {
-        display: none;
-        position: fixed;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(0,0,0,0.5);
-        z-index: 1040;
-        }
-        .sidebar-overlay.show { display: block; }
-        }
-        @media (min-width: 769px) {
-        .mobile-topbar { display: none !important; }
-        .sidebar { transform: translateX(0) !important; }
-        }
+    .sidebar {
+    width: 240px; min-height: 100vh; background: #1A3A6B;
+    position: fixed; top: 0; left: 0; padding-top: 20px;
+    z-index: 1050; transition: transform 0.3s ease;
+    }
+    .sidebar-brand {
+    color: white; font-size: 15px; font-weight: 600;
+    padding: 0 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 10px;
+    }
+    .sidebar-brand small { display: block; font-size: 11px; opacity: 0.7; font-weight: 400; }
+    .nav-link {
+    color: rgba(255,255,255,0.75); padding: 10px 20px; font-size: 14px;
+    display: flex; align-items: center; gap: 10px;
+    }
+    .nav-link:hover, .nav-link.active {
+    color: white; background: rgba(255,255,255,0.1); border-left: 3px solid #fff;
+    }
+    .main-content { margin-left: 240px; padding: 24px; }
+    .topbar {
+    background: white; border-radius: 12px; padding: 14px 20px;
+    margin-bottom: 24px; display: flex; justify-content: space-between;
+    align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .stat-card {
+    background: white; border-radius: 12px; padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 4px solid;
+    }
+    .card { border: none; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .cashier-topbar {
+    background: #1A3A6B; padding: 12px 24px;
+    display: flex; justify-content: space-between; align-items: center;
+    }
+    .cashier-topbar-brand { color: white; font-size: 16px; font-weight: 600; }
+    .cashier-topbar-right { color: rgba(255,255,255,0.8); font-size: 13px; }
+    .mobile-topbar { display: none; }
+    .sidebar-overlay {
+    display: none; position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5); z-index: 1040;
+    }
+    .sidebar-overlay.show { display: block; }
+    @media (max-width: 768px) {
+    .sidebar { transform: translateX(-240px); }
+    .sidebar.open { transform: translateX(0); }
+    .main-content { margin-left: 0 !important; padding: 70px 12px 16px !important; }
+    .mobile-topbar {
+        display: flex; position: fixed; top: 0; left: 0; right: 0;
+        height: 56px; background: #1A3A6B; z-index: 1030;
+        align-items: center; padding: 0 16px;
+        justify-content: space-between;
+    }
+    .topbar { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .stat-card { margin-bottom: 8px; }
+    .modal-dialog { margin: 8px; }
+    .table-responsive { font-size: 13px; }
+    }
+    @media (min-width: 769px) {
+    .mobile-topbar { display: none !important; }
+    .sidebar { transform: translateX(0) !important; }
+    }
     </style>
 </head>
 <body>
-    <!-- Mobile Top Bar -->
-<div class="mobile-topbar" style="display:none; position:fixed; top:0; left:0; right:0; height:56px; background:#1A3A6B; z-index:1030; align-items:center; padding:0 16px; justify-content:space-between;">
+    
+<!-- Mobile Top Bar -->
+<div class="mobile-topbar">
     <span style="color:white; font-size:15px; font-weight:600;">
         <i class="bi bi-mortarboard-fill me-2"></i>Cainta Scholarship
     </span>
@@ -155,9 +142,10 @@ $total_scholars_disbursed = $pdo->query("SELECT COUNT(DISTINCT scholar_id) FROM 
         <i class="bi bi-list" id="nav-icon"></i>
     </button>
 </div>
+    
 <!-- Sidebar Overlay -->
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleNav()"></div>
-
+    
 <?php if($is_admin): ?>
 <!-- Admin Sidebar -->
 <div class="sidebar" id="sidebar">
@@ -190,7 +178,7 @@ $total_scholars_disbursed = $pdo->query("SELECT COUNT(DISTINCT scholar_id) FROM 
 </div>
 <div class="p-4">
 <?php endif; ?>
-
+    
     <div class="topbar">
         <div>
             <h5 class="mb-0 fw-bold">Disbursements</h5>
@@ -211,7 +199,7 @@ $total_scholars_disbursed = $pdo->query("SELECT COUNT(DISTINCT scholar_id) FROM 
             <?php endif; ?>
         </div>
     </div>
-
+    
     <?php if(isset($_GET['success'])): ?>
     <div class="alert alert-success alert-dismissible fade show">
         <i class="bi bi-check-circle me-1"></i>
@@ -222,7 +210,7 @@ $total_scholars_disbursed = $pdo->query("SELECT COUNT(DISTINCT scholar_id) FROM 
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
     <?php endif; ?>
-
+    
     <!-- Stat Cards -->
     <div class="row g-3 mb-4">
         <div class="col-md-4">
@@ -244,7 +232,7 @@ $total_scholars_disbursed = $pdo->query("SELECT COUNT(DISTINCT scholar_id) FROM 
             </div>
         </div>
     </div>
-
+    
     <!-- Disbursements Table -->
     <div class="card">
         <div class="card-body">
@@ -314,13 +302,13 @@ $total_scholars_disbursed = $pdo->query("SELECT COUNT(DISTINCT scholar_id) FROM 
             </div>
         </div>
     </div>
-
+    
 <?php if($is_admin): ?>
 </div>
 <?php else: ?>
 </div>
 <?php endif; ?>
-
+    
 <?php if($is_admin): ?>
 <!-- Add Disbursement Modal (admin only) -->
 <div class="modal fade" id="addModal" tabindex="-1">
@@ -394,7 +382,7 @@ $total_scholars_disbursed = $pdo->query("SELECT COUNT(DISTINCT scholar_id) FROM 
     </div>
 </div>
 <?php endif; ?>
-
+    
 <?php if($is_admin) include '../chatbot_widget.php'; ?>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
@@ -421,17 +409,23 @@ document.getElementById('addModal').addEventListener('hidden.bs.modal', function
 });
 <?php endif; ?>
 </script>
-
+    
 <script>
 function toggleNav() {
-    const sidebar = document.getElementById('sidebar') || document.querySelector('.sidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    const icon = document.getElementById('nav-icon');
-    sidebar.classList.toggle('open');
-    overlay.classList.toggle('show');
-    icon.className = sidebar.classList.contains('open') ? 'bi bi-x' : 'bi bi-list';
+    var sidebar = document.getElementById('sidebar');
+    var overlay = document.getElementById('sidebarOverlay');
+    var icon = document.getElementById('nav-icon');
+    if(sidebar.classList.contains('open')) {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('show');
+        icon.className = 'bi bi-list';
+    } else {
+        sidebar.classList.add('open');
+        overlay.classList.add('show');
+        icon.className = 'bi bi-x';
+    }
 }
 </script>
-
+    
 </body>
 </html>
