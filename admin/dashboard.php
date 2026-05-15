@@ -118,7 +118,6 @@ $recent_apps = $pdo->query("
     <nav>
         <a href="dashboard.php" class="nav-link active"><i class="bi bi-speedometer2"></i> Dashboard</a>
         <a href="scholars.php" class="nav-link"><i class="bi bi-people"></i> Scholars</a>
-        <a href="students.php" class="nav-link"><i class="bi bi-person-lines-fill"></i> Students</a>
         <a href="applications.php" class="nav-link"><i class="bi bi-file-earmark-text"></i> Applications</a>
         <a href="disbursements.php" class="nav-link"><i class="bi bi-cash-stack"></i> Disbursements</a>
         <a href="reports.php" class="nav-link"><i class="bi bi-bar-chart"></i> Reports</a>
