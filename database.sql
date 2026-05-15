@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 15, 2026 at 09:39 AM
+-- Generation Time: May 15, 2026 at 06:58 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -54,7 +54,15 @@ INSERT INTO `applications` (`application_id`, `scholar_id`, `school_year`, `seme
 (8, 5, '2025-2026', '2nd', NULL, NULL, 'approved', '', '2026-05-13 09:38:09', 'asdadasdasd', 'afsasffsa', 'afssafasasfasf', 'fasfsafasf'),
 (9, 6, '2025-2026', '2nd', NULL, NULL, 'approved', '', '2026-05-13 09:39:39', 'saasdadasd', 'asdasdasda', 'dasdsadsad', 'asdsadasd'),
 (10, 7, '2025-2026', '2nd', NULL, NULL, 'approved', '', '2026-05-13 09:40:26', 'asdasda', 'adsdsada', 'dasdada', 'dasdada'),
-(11, 8, '2025-2026', '2nd', NULL, NULL, 'rejected', '', '2026-05-13 09:40:58', 'asdasdasdasdas', 'dasdadadasdsa', 'asdasdasdsada', 'dasdadad');
+(11, 8, '2025-2026', '2nd', NULL, NULL, 'approved', '', '2026-05-13 09:40:58', 'asdasdasdasdas', 'dasdadadasdsa', 'asdasdasdsada', 'dasdadad'),
+(12, 1, '2025-2026', '2nd', NULL, NULL, 'incomplete', 'grade slip and school receipt not submitted', '2026-05-15 16:20:01', 'IAN VILLAR', 'DRIVER', 'IRY CALOOYONG MAANO', 'TGP'),
+(13, 1, '2025-2026', '2nd', NULL, NULL, 'approved', '', '2026-05-15 16:22:27', 'IAN VILLAR', 'DRIVER', 'IRY CALOOYONG MAANO', 'TGP'),
+(14, 10, '2025-2026', '2nd', NULL, NULL, 'approved', '', '2026-05-15 16:25:15', 'asdadada', 'dasdasdas', 'dasdasdasd', 'dasasdasd'),
+(15, 11, '2025-2026', '2nd', NULL, NULL, 'approved', '', '2026-05-15 16:33:13', 'yuyuyuu', 'yuyuyu', 'uyuyu', 'uuyuy'),
+(16, 12, '2025-2026', '2nd', NULL, NULL, 'approved', '', '2026-05-15 16:35:49', 'aeddeadadsadasd', 'dasdasdadasd', 'asdasdsadasdsadasd', 'dasdasdada'),
+(17, 13, '2025-2026', '2nd', NULL, NULL, 'approved', '', '2026-05-15 16:37:58', 'asdadas', 'sdasdasda', 'dasdad', 'dasdasda'),
+(18, 14, '2025-2026', '2nd', NULL, NULL, 'approved', '', '2026-05-15 16:41:08', 'asdad', 'dasdasd', 'asdasdd', 'dasdasdas'),
+(19, 15, '2025-2026', '2nd', NULL, NULL, 'approved', '', '2026-05-15 16:43:39', 'dsadsad', 'adasdsad', 'asdasddas', 'dsadsad');
 
 -- --------------------------------------------------------
 
@@ -150,7 +158,69 @@ INSERT INTO `documents` (`document_id`, `application_id`, `document_type`, `file
 (65, 11, 'year_level', '1', 0, NULL, NULL),
 (66, 11, 'grade_slip', 'grade_slip_8_1778665258.jpg', 0, NULL, NULL),
 (67, 11, 'enrollment_receipt', 'enrollment_receipt_8_1778665258.jpg', 0, NULL, NULL),
-(68, 11, 'enrollment_form', 'enrollment_form_8_1778665258.jpg', 0, NULL, NULL);
+(68, 11, 'enrollment_form', 'enrollment_form_8_1778665258.jpg', 0, NULL, NULL),
+(69, 12, 'barangay', 'Brgy. San Juan', 0, NULL, NULL),
+(70, 12, 'birthdate', '2002-09-28', 0, NULL, NULL),
+(71, 12, 'school', 'STI COLLEGE ORTIGAS-CAINTA', 0, NULL, NULL),
+(72, 12, 'course', 'BSIT', 0, NULL, NULL),
+(73, 12, 'year_level', '3', 0, NULL, NULL),
+(74, 12, 'enrollment_form', 'enrollment_form_1_1778862001_190.jpg', 0, NULL, NULL),
+(75, 13, 'barangay', 'Brgy. San Juan', 0, NULL, NULL),
+(76, 13, 'birthdate', '2002-09-28', 0, NULL, NULL),
+(77, 13, 'school', 'STI COLLEGE ORTIGAS-CAINTA', 0, NULL, NULL),
+(78, 13, 'course', 'BSIT', 0, NULL, NULL),
+(79, 13, 'year_level', '3', 0, NULL, NULL),
+(80, 13, 'grade_slip', 'grade_slip_1_1778862147_838.jpg', 0, NULL, NULL),
+(81, 13, 'enrollment_receipt', 'enrollment_receipt_1_1778862147_983.jpg', 0, NULL, NULL),
+(82, 13, 'enrollment_form', 'enrollment_form_1_1778862147_681.jpg', 0, NULL, NULL),
+(83, 14, 'barangay', 'Brgy. San Roque', 0, NULL, NULL),
+(84, 14, 'birthdate', '2001-01-01', 0, NULL, NULL),
+(85, 14, 'school', 'MAPUA', 0, NULL, NULL),
+(86, 14, 'course', 'BSA', 0, NULL, NULL),
+(87, 14, 'year_level', '2', 0, NULL, NULL),
+(88, 14, 'grade_slip', 'grade_slip_10_1778862315_917.jpg', 0, NULL, NULL),
+(89, 14, 'enrollment_receipt', 'enrollment_receipt_10_1778862315_771.jpg', 0, NULL, NULL),
+(90, 14, 'enrollment_form', 'enrollment_form_10_1778862315_539.jpg', 0, NULL, NULL),
+(91, 15, 'barangay', 'Brgy. San Roque', 0, NULL, NULL),
+(92, 15, 'birthdate', '2002-02-02', 0, NULL, NULL),
+(93, 15, 'school', 'UP', 0, NULL, NULL),
+(94, 15, 'course', 'BSE', 0, NULL, NULL),
+(95, 15, 'year_level', '2', 0, NULL, NULL),
+(96, 15, 'grade_slip', 'grade_slip_11_1778862793_100.jpg', 0, NULL, NULL),
+(97, 15, 'enrollment_receipt', 'enrollment_receipt_11_1778862793_633.jpg', 0, NULL, NULL),
+(98, 15, 'enrollment_form', 'enrollment_form_11_1778862793_250.jpg', 0, NULL, NULL),
+(99, 16, 'barangay', 'Brgy. Santa Rosa', 0, NULL, NULL),
+(100, 16, 'birthdate', '2001-02-03', 0, NULL, NULL),
+(101, 16, 'school', 'De La Salle University ', 0, NULL, NULL),
+(102, 16, 'course', 'BEMS', 0, NULL, NULL),
+(103, 16, 'year_level', '4', 0, NULL, NULL),
+(104, 16, 'grade_slip', 'grade_slip_12_1778862949_983.jpg', 0, NULL, NULL),
+(105, 16, 'enrollment_receipt', 'enrollment_receipt_12_1778862949_423.jpg', 0, NULL, NULL),
+(106, 16, 'enrollment_form', 'enrollment_form_12_1778862949_993.jpg', 0, NULL, NULL),
+(107, 17, 'barangay', 'Brgy. Santa Rosa', 0, NULL, NULL),
+(108, 17, 'birthdate', '2001-03-03', 0, NULL, NULL),
+(109, 17, 'school', 'University of Santo Tomas ', 0, NULL, NULL),
+(110, 17, 'course', 'BAgr', 0, NULL, NULL),
+(111, 17, 'year_level', '2', 0, NULL, NULL),
+(112, 17, 'grade_slip', 'grade_slip_13_1778863078_915.jpg', 0, NULL, NULL),
+(113, 17, 'enrollment_receipt', 'enrollment_receipt_13_1778863078_716.jpg', 0, NULL, NULL),
+(114, 17, 'enrollment_form', 'enrollment_form_13_1778863078_853.jpg', 0, NULL, NULL),
+(115, 18, 'barangay', 'Brgy. Santo Domingo', 0, NULL, NULL),
+(116, 18, 'birthdate', '2001-01-01', 0, NULL, NULL),
+(117, 18, 'school', 'Far Eastern University ', 0, NULL, NULL),
+(118, 18, 'course', 'BBA', 0, NULL, NULL),
+(119, 18, 'year_level', '2', 0, NULL, NULL),
+(120, 18, 'grade_slip', 'grade_slip_14_1778863268_803.jpg', 0, NULL, NULL),
+(121, 18, 'enrollment_receipt', 'enrollment_receipt_14_1778863268_966.jpg', 0, NULL, NULL),
+(122, 18, 'enrollment_form', 'enrollment_form_14_1778863268_376.jpg', 0, NULL, NULL),
+(123, 19, 'barangay', 'Brgy. Santo Niño', 0, NULL, NULL),
+(124, 19, 'birthdate', '2001-04-04', 0, NULL, NULL),
+(125, 19, 'school', 'Polytechnic University of the Philippines ', 0, NULL, NULL),
+(126, 19, 'course', 'B.A.J.', 0, NULL, NULL),
+(127, 19, 'year_level', '2', 0, NULL, NULL),
+(128, 19, 'grade_slip', 'grade_slip_15_1778863419_686.jpg', 0, NULL, NULL),
+(129, 19, 'enrollment_receipt', 'enrollment_receipt_15_1778863419_797.jpg', 0, NULL, NULL),
+(130, 19, 'enrollment_form', 'enrollment_form_15_1778863419_563.jpg', 0, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -216,10 +286,18 @@ CREATE TABLE `scholars` (
 --
 
 INSERT INTO `scholars` (`scholar_id`, `first_name`, `last_name`, `middle_name`, `birthdate`, `gender`, `address`, `barangay`, `contact_no`, `email`, `school`, `course`, `year_level`, `status`, `created_at`, `is_archived`, `archived_at`, `archive_reason`) VALUES
-(1, 'John Ryan', 'Villar', '', '2006-09-12', 'Male', 'PELICAN ST ANAKPAWIS CAINTA RIZAL', 'Brgy. San Andres', '09123132123', 'johnryanvillar7@gmail.com', 'ICCT COLLEGE CAINTA', 'BSIT', 1, 'active', '2026-04-30 00:40:17', 0, NULL, NULL),
+(1, 'John Ryan', 'Villar', '', '2006-09-12', 'Male', 'PELICAN ST ANAKPAWIS CAINTA RIZAL', 'Brgy. San Juan', '09123132123', 'johnryanvillar7@gmail.com', 'ICCT COLLEGE CAINTA', 'BSIT', 1, 'active', '2026-04-30 00:40:17', 0, NULL, NULL),
 (4, 'MILYN', 'AMOGUIS', 'PAGALAN', '2001-01-01', 'Female', 'asdasssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss', 'Brgy. San Isidro', '09211312414', 'amoguis@gmail.com', 'ATENEO', 'BSPsych', 1, 'active', '2026-05-13 09:43:23', 0, NULL, NULL),
 (5, 'SANDARA', 'ABELLO', 'GUCAN', '2001-01-01', 'Female', 'asdasssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss', 'Brgy. San Andres', '09211312413', 'abello@gmail.com', 'PLM', 'BSN', 1, 'active', '2026-05-13 09:43:36', 0, NULL, NULL),
-(6, 'EMANUEL', 'ABANTE', 'DE CLARO', '2001-01-01', 'Male', 'asdasssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss', 'Brgy. San Andres', '09211312412', 'abante@gmail.com', 'ICCT', 'BSSS', 1, 'active', '2026-05-13 09:43:48', 0, NULL, NULL);
+(6, 'EMANUEL', 'ABANTE', 'DE CLARO', '2001-01-01', 'Male', 'asdasssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss', 'Brgy. San Andres', '09211312412', 'abante@gmail.com', 'ICCT', 'BSSS', 1, 'active', '2026-05-13 09:43:48', 0, NULL, NULL),
+(7, 'James', 'Villar', 'Brian', '2002-09-28', 'Male', 'PELICAN ST ANAKPAWIS CAINTA RIZAL', 'Brgy. San Juan', '09305622222', 'villarjamesbrian1@gmail.com', 'STI COLLEGE ORTIGAS-CAINTA', 'BSIT', 3, 'active', '2026-05-15 16:22:52', 0, NULL, NULL),
+(8, 'Caimee', 'Buban', 'G', '2001-01-01', 'Female', 'san roque', 'Brgy. San Roque', '11231231326', 'buban@gmail.com', 'MAPUA', 'BSA', 2, 'active', '2026-05-15 16:29:28', 0, NULL, NULL),
+(9, 'BRIXX', 'AMPIL', 'BULAN', '2001-01-01', 'Male', 'asdasssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss', 'Brgy. San Isidro', '09211312414', 'ampil@gmail.com', 'NU', 'BSTM', 1, 'active', '2026-05-15 16:30:03', 0, NULL, NULL),
+(10, 'Mary', 'Yu', 'Villegas', '2002-02-02', 'Female', 'san roque', 'Brgy. San Roque', '09512351315', 'yu@gmail.com', 'UP', 'BSE', 2, 'active', '2026-05-15 16:33:22', 0, NULL, NULL),
+(11, 'Lady', 'Dela Cruz', 'Lapitan', '2001-02-03', 'Female', 'Santa Rosa', 'Brgy. Santa Rosa', '09777777777', 'delacruz@gmail.com', 'De La Salle University ', 'BEMS', 4, 'active', '2026-05-15 16:36:07', 0, NULL, NULL),
+(12, 'RUN', 'HERNANDEZ', 'SEÑORA', '2001-03-03', 'Male', 'Santa Rosa', 'Brgy. Santa Rosa', '09777777111', 'hernandez@gmail.com', 'University of Santo Tomas ', 'BAgr', 2, 'active', '2026-05-15 16:38:14', 0, NULL, NULL),
+(13, 'MARGARET', 'DE GUZMAN', 'TOLENTINO', '2001-01-01', 'Female', 'santo domingo', 'Brgy. Santo Domingo', '09532234525', 'deguzman@gmail.com', 'Far Eastern University ', 'BBA', 2, 'active', '2026-05-15 16:41:22', 0, NULL, NULL),
+(14, 'PAULINE', 'FABIAN', 'FAMADICO', '2001-04-04', 'Female', 'Santo Nino', 'Brgy. Santo Niño', '09314444444', 'fabian@gmail.com', 'Polytechnic University of the Philippines ', 'B.A.J.', 2, 'active', '2026-05-15 16:43:53', 0, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -259,7 +337,13 @@ INSERT INTO `students` (`student_id`, `first_name`, `last_name`, `middle_name`, 
 (6, 'SANDARA', 'ABELLO', 'GUCAN', 'abello@gmail.com', '$2y$10$LpqqMwxRynLwpjtGZA.sq.lIadZ5HVSixS1Kjlf5tRL7AOaJC0uvO', '09211312413', 'asdasssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss', 'Brgy. San Andres', '2001-01-01', 'Female', 1, '2026-05-13 09:31:49', 0, NULL, NULL),
 (7, 'MILYN', 'AMOGUIS', 'PAGALAN', 'amoguis@gmail.com', '$2y$10$8z4fUS8xz2SjokxDdPLTvulKIQ0C570Vte7qiTyhIRB100b3wnWKe', '09211312414', 'asdasssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss', 'Brgy. San Isidro', '2001-01-01', 'Female', 1, '2026-05-13 09:32:39', 0, NULL, NULL),
 (8, 'BRIXX', 'AMPIL', 'BULAN', 'ampil@gmail.com', '$2y$10$3jiceWq3TDM.5qJlDPH2qeO0lLNefMQM77pIC96JSB5Jy.OSEy89y', '09211312414', 'asdasssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss', 'Brgy. San Isidro', '2001-01-01', 'Male', 1, '2026-05-13 09:33:15', 0, NULL, NULL),
-(9, 'PRINCESS', 'GARCIA', 'BORROMEO', 'garcia@gmail.com', '$2y$10$1fMRI8m6HtxdS7uEdgASRucY5R2YyplcrQEmF1HXOlpoVVx8YyK.u', '09211312415', 'asdasssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss', 'Brgy. San Isidro', '2001-01-01', 'Female', 1, '2026-05-13 09:33:52', 0, NULL, NULL);
+(9, 'PRINCESS', 'GARCIA', 'BORROMEO', 'garcia@gmail.com', '$2y$10$1fMRI8m6HtxdS7uEdgASRucY5R2YyplcrQEmF1HXOlpoVVx8YyK.u', '09211312415', 'asdasssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss', 'Brgy. San Isidro', '2001-01-01', 'Female', 1, '2026-05-13 09:33:52', 0, NULL, NULL),
+(10, 'Caimee', 'Buban', 'G', 'buban@gmail.com', '$2y$10$vbRucnjC2WwXY/Hj3y4X.OEQOg/3nrPKC0MEwYGw8zX8laZScGpnW', '11231231326', 'san roque', 'Brgy. San Roque', '2001-01-01', 'Female', 1, '2026-05-15 16:24:42', 0, NULL, NULL),
+(11, 'Mary', 'Yu', 'Villegas', 'yu@gmail.com', '$2y$10$60RMsDgOBWwCMmkgNJmdMeSH3l7ItKUbDDdhLmY98nkNoqJ1ESTh6', '09512351315', 'san roque', 'Brgy. San Roque', '2002-02-02', 'Female', 1, '2026-05-15 16:32:04', 0, NULL, NULL),
+(12, 'Lady', 'Dela Cruz', 'Lapitan', 'delacruz@gmail.com', '$2y$10$FirxKZ4uiFuAPv5ZhgrjK.PCJujV4osggRHZJnivKI2jJPkG3HuUm', '09777777777', 'Santa Rosa', 'Brgy. Santa Rosa', '2001-02-03', 'Female', 1, '2026-05-15 16:34:39', 0, NULL, NULL),
+(13, 'RUN', 'HERNANDEZ', 'SEÑORA', 'hernandez@gmail.com', '$2y$10$dPtWUPcT.n7e2EiEVtFJweBJ039oF1xWoEPvANJXq3Q7UNAGOGNym', '09777777111', 'Santa Rosa', 'Brgy. Santa Rosa', '2001-03-03', 'Male', 1, '2026-05-15 16:37:08', 0, NULL, NULL),
+(14, 'MARGARET', 'DE GUZMAN', 'TOLENTINO', 'deguzman@gmail.com', '$2y$10$1IU1d2lLZp6KJGQNGal/WuW9fECI6h6fg6wYBTPil2Hjz9WvgI45y', '09532234525', 'santo domingo', 'Brgy. Santo Domingo', '2001-01-01', 'Female', 1, '2026-05-15 16:40:21', 0, NULL, NULL),
+(15, 'PAULINE', 'FABIAN', 'FAMADICO', 'fabian@gmail.com', '$2y$10$oZgJEUwpAvr64Eo5VKmoeugEs0w3Gwviol8uiOgnnmows4cepp3PO', '09314444444', 'Santo Nino', 'Brgy. Santo Niño', '2001-04-04', 'Female', 1, '2026-05-15 16:42:45', 0, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -353,7 +437,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `applications`
 --
 ALTER TABLE `applications`
-  MODIFY `application_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `application_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `disbursements`
@@ -365,7 +449,7 @@ ALTER TABLE `disbursements`
 -- AUTO_INCREMENT for table `documents`
 --
 ALTER TABLE `documents`
-  MODIFY `document_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=69;
+  MODIFY `document_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=131;
 
 --
 -- AUTO_INCREMENT for table `inventory_items`
@@ -383,19 +467,19 @@ ALTER TABLE `inventory_transactions`
 -- AUTO_INCREMENT for table `scholars`
 --
 ALTER TABLE `scholars`
-  MODIFY `scholar_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `scholar_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `student_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `student_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables

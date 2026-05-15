@@ -9,19 +9,18 @@ if(!isset($_SESSION['user_id']) || $_SESSION['role'] != 'officer') {
 
 // Handle status update
 if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_status'])) {
-    $app_id = $_POST['application_id'];
-    $status = $_POST['status'];
+    $app_id  = $_POST['application_id'];
+    $status  = $_POST['status'];
     $remarks = $_POST['remarks'];
 
     $stmt = $pdo->prepare("UPDATE applications SET status=?, remarks=? WHERE application_id=?");
     $stmt->execute([$status, $remarks, $app_id]);
 
-    // Send email notification if approved, rejected or incomplete
     if(in_array($status, ['approved', 'rejected', 'incomplete'])) {
         $student = $pdo->prepare("
-            SELECT s.email, s.first_name, s.last_name 
-            FROM applications a 
-            JOIN students s ON a.scholar_id = s.student_id 
+            SELECT s.email, s.first_name, s.last_name
+            FROM applications a
+            JOIN students s ON a.scholar_id = s.student_id
             WHERE a.application_id = ?
         ");
         $student->execute([$app_id]);
@@ -39,8 +38,8 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_status'])) {
 }
 
 // Get stats
-$total_pending = $pdo->query("SELECT COUNT(*) FROM applications WHERE status='pending'")->fetchColumn();
-$total_review = $pdo->query("SELECT COUNT(*) FROM applications WHERE status='for_review'")->fetchColumn();
+$total_pending  = $pdo->query("SELECT COUNT(*) FROM applications WHERE status='pending'")->fetchColumn();
+$total_review   = $pdo->query("SELECT COUNT(*) FROM applications WHERE status='for_review'")->fetchColumn();
 $total_approved = $pdo->query("SELECT COUNT(*) FROM applications WHERE status='approved'")->fetchColumn();
 $total_rejected = $pdo->query("SELECT COUNT(*) FROM applications WHERE status='rejected'")->fetchColumn();
 
@@ -89,21 +88,17 @@ $applications = $pdo->query("
             box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 4px solid;
         }
         .card { border: none; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .badge-pending { background: #fff3cd; color: #856404; }
-        .badge-approved { background: #d1e7dd; color: #0f5132; }
-        .badge-rejected { background: #f8d7da; color: #842029; }
+        .badge-pending    { background: #fff3cd; color: #856404; }
+        .badge-approved   { background: #d1e7dd; color: #0f5132; }
+        .badge-rejected   { background: #f8d7da; color: #842029; }
         .badge-for_review { background: #cfe2ff; color: #084298; }
         .badge-incomplete { background: #f8d7da; color: #842029; }
-        @media (max-width: 768px) {
-        .sidebar { display: none; }
-        .main-content { margin-left: 0 !important; padding: 16px !important; }
-        .topbar { flex-direction: column; align-items: flex-start; gap: 8px; }
-        .stat-card { margin-bottom: 8px; }
-        .filter-btn { font-size: 11px; padding: 4px 8px; }
-        .modal-dialog { margin: 8px; }
-        .table-responsive { font-size: 13px; }
-        .main-content { max-width: 100% !important; }
+        .doc-card {
+            border: 1px solid #dee2e6; border-radius: 8px;
+            padding: 10px; text-align: center; height: 100%;
         }
+        .doc-card.missing  { background: #fff8f8; border-color: #f5c6cb; }
+        .doc-card.uploaded { background: #f8fff9; border-color: #c3e6cb; }
     </style>
 </head>
 <body>
@@ -233,6 +228,7 @@ $applications = $pdo->query("
             </div>
             <div class="modal-body">
                 <div class="row g-3 mb-3" id="appDetails"></div>
+                <div id="appDocuments"></div>
                 <hr>
                 <form method="POST">
                     <input type="hidden" name="update_status" value="1">
@@ -250,7 +246,7 @@ $applications = $pdo->query("
                     <div class="mb-3">
                         <label class="form-label fw-bold">Remarks</label>
                         <textarea name="remarks" id="modal_remarks" class="form-control" rows="3"
-                                    placeholder="Add remarks for the applicant..."></textarea>
+                                  placeholder="Add remarks for the applicant..."></textarea>
                     </div>
                     <div class="d-flex gap-2 justify-content-end">
                         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -264,30 +260,174 @@ $applications = $pdo->query("
     </div>
 </div>
 
+<?php include '../chatbot_widget.php'; ?>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 function reviewApp(app) {
     document.getElementById('modal_app_id').value = app.application_id;
-    document.getElementById('modal_status').value = app.status;
     document.getElementById('modal_remarks').value = app.remarks || '';
 
-    let details = `
-        <div class="col-md-6"><div class="text-muted" style="font-size:12px;">Applicant</div>
-        <div class="fw-bold">${app.last_name}, ${app.first_name}</div></div>
-        <div class="col-md-6"><div class="text-muted" style="font-size:12px;">Email</div>
-        <div>${app.email}</div></div>
-        <div class="col-md-4"><div class="text-muted" style="font-size:12px;">Barangay</div>
-        <div>${app.barangay}</div></div>
-        <div class="col-md-4"><div class="text-muted" style="font-size:12px;">School Year</div>
-        <div>${app.school_year}</div></div>
-        <div class="col-md-4"><div class="text-muted" style="font-size:12px;">Semester</div>
-        <div>${app.semester} Semester</div></div>
-        <div class="col-md-6"><div class="text-muted" style="font-size:12px;">Father</div>
-        <div>${app.father_name || 'N/A'} — ${app.father_occupation || 'N/A'}</div></div>
-        <div class="col-md-6"><div class="text-muted" style="font-size:12px;">Mother</div>
-        <div>${app.mother_name || 'N/A'} — ${app.mother_occupation || 'N/A'}</div></div>
+    const statusSelect = document.getElementById('modal_status');
+    Array.from(statusSelect.options).forEach(opt => {
+        opt.hidden = opt.value === app.status;
+    });
+    const firstVisible = Array.from(statusSelect.options).find(opt => opt.value !== app.status);
+    if(firstVisible) statusSelect.value = firstVisible.value;
+
+    document.getElementById('appDetails').innerHTML = `
+        <div class="col-md-6">
+            <div class="text-muted" style="font-size:12px;">Applicant Name</div>
+            <div class="fw-bold">${app.last_name}, ${app.first_name}</div>
+        </div>
+        <div class="col-md-6">
+            <div class="text-muted" style="font-size:12px;">Email</div>
+            <div>${app.email}</div>
+        </div>
+        <div class="col-md-4">
+            <div class="text-muted" style="font-size:12px;">Barangay</div>
+            <div>${app.barangay}</div>
+        </div>
+        <div class="col-md-4">
+            <div class="text-muted" style="font-size:12px;">School Year</div>
+            <div>${app.school_year}</div>
+        </div>
+        <div class="col-md-4">
+            <div class="text-muted" style="font-size:12px;">Semester</div>
+            <div>${app.semester} Semester</div>
+        </div>
+        <div class="col-md-6">
+            <div class="text-muted" style="font-size:12px;">Father's Name / Occupation</div>
+            <div>${app.father_name || 'N/A'} — ${app.father_occupation || 'N/A'}</div>
+        </div>
+        <div class="col-md-6">
+            <div class="text-muted" style="font-size:12px;">Mother's Name / Occupation</div>
+            <div>${app.mother_name || 'N/A'} — ${app.mother_occupation || 'N/A'}</div>
+        </div>
+        <div class="col-md-12">
+            <div class="text-muted" style="font-size:12px;">Submitted</div>
+            <div>${app.submitted_at}</div>
+        </div>
     `;
-    document.getElementById('appDetails').innerHTML = details;
+
+    // Loading indicator
+    document.getElementById('appDocuments').innerHTML = `
+        <div class="text-center py-3 text-muted">
+            <div class="spinner-border spinner-border-sm me-2"></div> Loading documents...
+        </div>`;
+
+    // ✅ Use admin's get_documents.php — same as admin applications page
+    fetch('../admin/get_documents.php?app_id=' + app.application_id)
+        .then(res => res.json())
+        .then(docs => {
+            const requiredDocs = [
+                { type: 'grade_slip',         label: 'Grade Slip / Transcript' },
+                { type: 'enrollment_receipt', label: 'School Enrollment Receipt' },
+                { type: 'enrollment_form',    label: 'Enrollment Form' },
+            ];
+
+            const infoDocs = ['barangay','birthdate','school','course','year_level'];
+
+            const docMap = {};
+            docs.forEach(doc => { docMap[doc.document_type] = doc; });
+
+            let docsHtml = '<hr><h6 class="fw-bold mb-2"><i class="bi bi-info-circle me-1"></i> Application Info</h6>';
+
+            docsHtml += '<div class="row g-2 mb-3">';
+            infoDocs.forEach(type => {
+                if(docMap[type]) {
+                    let label = type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                    docsHtml += `
+                    <div class="col-md-4">
+                        <div class="border rounded p-2" style="background:#f8f9fa;">
+                            <div class="text-muted" style="font-size:11px;">${label}</div>
+                            <div style="font-size:13px; font-weight:500;">${docMap[type].file_path}</div>
+                        </div>
+                    </div>`;
+                }
+            });
+            docsHtml += '</div>';
+
+            // Always show all 3 required docs
+            docsHtml += '<h6 class="fw-bold mb-2"><i class="bi bi-paperclip me-1"></i> Submitted Documents</h6>';
+            docsHtml += '<div class="row g-3">';
+
+            requiredDocs.forEach(req => {
+                const doc = docMap[req.type];
+                if(doc) {
+                    const ext     = doc.file_path.split('.').pop().toLowerCase();
+                    const isImage = ['jpg','jpeg','png'].includes(ext);
+                    const isPdf   = ext === 'pdf';
+                    const fileUrl = '../uploads/' + doc.file_path;
+
+                    if(isImage) {
+                        docsHtml += `
+                        <div class="col-md-4">
+                            <div class="doc-card uploaded">
+                                <div class="text-muted mb-1" style="font-size:11px;">${req.label}</div>
+                                <span class="badge bg-success mb-2" style="font-size:10px;">✅ Uploaded</span>
+                                <a href="${fileUrl}" target="_blank" class="d-block mb-2">
+                                    <img src="${fileUrl}"
+                                         style="max-width:100%; max-height:130px; border-radius:4px; object-fit:cover;"
+                                         onerror="this.parentElement.innerHTML='<span class=text-danger style=font-size:11px>Cannot load image</span>'">
+                                </a>
+                                <a href="${fileUrl}" target="_blank" class="btn btn-sm btn-outline-primary w-100">
+                                    <i class="bi bi-eye me-1"></i>View Full
+                                </a>
+                            </div>
+                        </div>`;
+                    } else if(isPdf) {
+                        docsHtml += `
+                        <div class="col-md-4">
+                            <div class="doc-card uploaded">
+                                <div class="text-muted mb-1" style="font-size:11px;">${req.label}</div>
+                                <span class="badge bg-success mb-2" style="font-size:10px;">✅ Uploaded</span>
+                                <div class="my-2">
+                                    <i class="bi bi-file-pdf text-danger" style="font-size:48px;"></i>
+                                </div>
+                                <a href="${fileUrl}" target="_blank" class="btn btn-sm btn-outline-danger w-100">
+                                    <i class="bi bi-eye me-1"></i>View PDF
+                                </a>
+                            </div>
+                        </div>`;
+                    } else {
+                        docsHtml += `
+                        <div class="col-md-4">
+                            <div class="doc-card uploaded">
+                                <div class="text-muted mb-1" style="font-size:11px;">${req.label}</div>
+                                <span class="badge bg-success mb-2" style="font-size:10px;">✅ Uploaded</span>
+                                <div class="my-2">
+                                    <i class="bi bi-file-earmark text-secondary" style="font-size:48px;"></i>
+                                </div>
+                                <a href="${fileUrl}" target="_blank" class="btn btn-sm btn-outline-secondary w-100">
+                                    <i class="bi bi-download me-1"></i>Download
+                                </a>
+                            </div>
+                        </div>`;
+                    }
+                } else {
+                    // Missing document
+                    docsHtml += `
+                    <div class="col-md-4">
+                        <div class="doc-card missing">
+                            <div class="text-muted mb-1" style="font-size:11px;">${req.label}</div>
+                            <span class="badge bg-danger mb-2" style="font-size:10px;">❌ Not Uploaded</span>
+                            <div class="my-2">
+                                <i class="bi bi-file-earmark-x text-danger" style="font-size:48px;"></i>
+                            </div>
+                            <div class="text-danger" style="font-size:11px;">Document not submitted</div>
+                        </div>
+                    </div>`;
+                }
+            });
+
+            docsHtml += '</div>';
+            document.getElementById('appDocuments').innerHTML = docsHtml;
+        })
+        .catch(() => {
+            document.getElementById('appDocuments').innerHTML =
+                '<div class="alert alert-danger mt-2">Failed to load documents. Please try again.</div>';
+        });
+
     new bootstrap.Modal(document.getElementById('reviewModal')).show();
 }
 </script>
